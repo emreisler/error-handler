@@ -16,43 +16,43 @@ go get github.com/emreisler/error-handler
 ## Usage Examples
 ### Gin Middleware
 ```go
-import "github.com/emreisler/error-handler/gin"
+import "github.com/emreisler/error-handler"
 
 func main() {
     r := gin.Default()
-    r.Use(gin.ErrorHandler())
+    r.Use(error_handler.GinMiddleware())
     // Your routes here
 }
 ```
 
 ### net/http Middleware
 ```go
-import "github.com/emreisler/error-handler/http"
+import "github.com/emreisler/error-handler"
 
 func main() {
-    http.Handle("/", http.ErrorHandler(http.HandlerFunc(yourHandler)))
+    http.Handle("/", error_handler.NetHTTPMiddleware(http.HandlerFunc(yourHandler)))
     http.ListenAndServe(":8080", nil)
 }
 ```
 
 ### Chi Middleware
 ```go
-import "github.com/emreisler/error-handler/chi"
+import "github.com/emreisler/error-handler"
 
 func main() {
     r := chi.NewRouter()
-    r.Use(chi.ErrorHandler())
+    r.Use(error_handler.ChiMiddleware())
     // Your routes here
 }
 ```
 
 ### Fiber Middleware
 ```go
-import "github.com/emreisler/error-handler/fiber"
+import "github.com/emreisler/error-handler"
 
 func main() {
     app := fiber.New()
-    app.Use(fiber.ErrorHandler())
+    app.Use(error_handler.FiberMiddleware())
     // Your routes here
 }
 ```
