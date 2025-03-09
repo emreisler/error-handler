@@ -9,13 +9,16 @@ func main() {
 	r := gin.Default()
 
 	// Apply global error handler middleware
-	r.Use(error_handler.ErrorHandlerMiddleware())
+	r.Use(error_handler.GinMiddleware())
 
 	// Define routes
 	r.GET("/example", ExampleHandler)
 
 	// Start the server
-	r.Run(":8080")
+	err := r.Run(":8080")
+	if err != nil {
+		return
+	}
 }
 
 // Example handler that returns different errors
