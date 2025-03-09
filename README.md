@@ -1,111 +1,73 @@
-# Go Error Handler Middleware for Gin
+# Error Handler Library
 
-A lightweight and efficient **error handling middleware** for **Gin-based web services** in Go. This library provides a **centralized error management system** that:
-- Catches **custom service errors** and maps them to appropriate **HTTP status codes**.
-- Automatically detects **database errors** (GORM, sqlx, etc.).
-- Recovers from **panics**, preventing server crashes.
-- Simplifies error handling so you **only need to call `c.Error(err)`** in handlers.
+## Introduction
+The Error Handler Library provides a centralized solution for managing errors in Go applications. Its primary purpose is to streamline error handling across various frameworks, ensuring that developers can focus on building features rather than managing error states.
 
----
+## Features
+- Centralized error handling
+- Automatic database error detection
+- Panic recovery
 
-## **🚀 Features**
-✅ **Centralized error handling** – No need for manual `errors.As()` checks.  
-✅ **Automatic database error detection** – Handles `gorm.ErrRecordNotFound`, `sql.ErrNoRows`, and more.  
-✅ **Panic recovery** – Prevents server crashes from unexpected panics.  
-✅ **Consistent HTTP responses** – Every error maps to a structured JSON response.  
-✅ **Minimal integration effort** – Plug & play with Gin middleware.
-
----
-
-## **📦 Installation**
+## Installation
 ```sh
-go get github.com/emreisler/gin-error-handler
+go get github.com/emreisler/error-handler
 ```
 
----
-
-## **📖 Usage Guide**
-
-### **Setup in a Gin Application**
+## Usage Examples
+### Gin Middleware
 ```go
-package main
-
-import (
-    "github.com/emreisler/gin-error-handler"
-    "github.com/gin-gonic/gin"
-)
+import "github.com/emreisler/error-handler/gin"
 
 func main() {
-    r := gin.New()
-    r.Use(ginerrorhandler.ErrorHandler())
-    
-    // Define your routes here
-    
-    r.Run()
+    r := gin.Default()
+    r.Use(gin.ErrorHandler())
+    // Your routes here
 }
 ```
 
-### **How to Use in Request Handlers**
-In your request handlers, you can use the middleware like this:
+### net/http Middleware
 ```go
-func MyHandler(c *gin.Context) {
-    err := SomeFunction()
-    if err != nil {
-        c.Error(err)  // This will be handled by the middleware
-        return
-    }
-    c.JSON(200, gin.H{"message": "success"})
+import "github.com/emreisler/error-handler/http"
+
+func main() {
+    http.Handle("/", http.ErrorHandler(http.HandlerFunc(yourHandler)))
+    http.ListenAndServe(":8080", nil)
 }
 ```
 
-### **Automatic Database Error Handling**
-The middleware automatically detects and handles database errors from GORM and sqlx, such as:
-- `gorm.ErrRecordNotFound`
-- `sql.ErrNoRows`
-
-### **Panic Recovery Example**
-If your application encounters a panic, the middleware will recover and return a 500 status code:
+### Chi Middleware
 ```go
-func PanicHandler(c *gin.Context) {
-    defer func() {
-        if r := recover(); r != nil {
-            c.Error(fmt.Errorf("panic occurred: %v", r))
-        }
-    }()
-    // Your code that may panic
+import "github.com/emreisler/error-handler/chi"
+
+func main() {
+    r := chi.NewRouter()
+    r.Use(chi.ErrorHandler())
+    // Your routes here
 }
 ```
 
----
+### Fiber Middleware
+```go
+import "github.com/emreisler/error-handler/fiber"
 
-## **🛠 Error Types**
-| Error Type                     | HTTP Status Code |
-|--------------------------------|------------------|
-| Custom Service Error           | 400              |
-| Not Found                      | 404              |
-| Internal Server Error          | 500              |
+func main() {
+    app := fiber.New()
+    app.Use(fiber.ErrorHandler())
+    // Your routes here
+}
+```
 
----
+## Database Error Handling
+The `mapDBError` function automatically maps database errors to a standardized error type, allowing for consistent error responses.
 
-## **💾 Database Error Handling**
-The middleware provides automatic detection of common database errors, allowing you to focus on your application logic without worrying about error handling.
+## Panic Recovery
+The library includes built-in panic recovery to prevent application crashes due to unexpected errors.
 
----
+## Error Type Mapping
+The library provides a mechanism for mapping different error types to a unified structure, making it easier to handle errors across various components.
 
-## **🚨 Panic Recovery**
-The middleware is designed to catch panics and prevent server crashes, ensuring that your application remains stable even in the face of unexpected errors.
+## Contribution Guidelines
+We welcome contributions! Please submit a pull request or open an issue for any enhancements or bug fixes.
 
----
-
-## **🤝 Why Use This Library**
-Integrating this library simplifies your error handling process, reduces boilerplate code, and enhances the stability of your Gin-based applications.
-
----
-
-## **💡 Contribution Guidelines**
-We welcome contributions! Please fork the repository and submit a pull request with your changes.
-
----
-
-## **📄 License**
-This project is licensed under the MIT License. See the LICENSE file for details.
+## License Information
+This library is licensed under the MIT License. See the LICENSE file for more details.
